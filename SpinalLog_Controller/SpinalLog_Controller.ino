@@ -52,7 +52,7 @@ Q2HX711 hx711(BAROMETER_DATA_PIN, BAROMETER_CLOCK_PIN);
       * fs (Sampling Frequency): The time interval between samples. Lower means how frequently the filter is applied.
       * adaptive (Adaptive Sampling Interval): Allows the filter to adjust to varying sampling intervals. For non-constant sampling.
 */
-LowPass<1> lp(1,100,false);
+LowPass<1> lp(1,500,false);
 /*================================================================================================
                                           Main Loop 
 ================================================================================================*/
