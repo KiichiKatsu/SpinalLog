@@ -12,7 +12,6 @@
 #define NUM_SENSORS 4 
 #define NUM_DIMENSIONS 3 
 #define TOTAL_SENSORS (NUM_SENSORS * TCA_CHANNEL_COUNT)
-#define PRESSURE_THRESHOLD_STIFF 1000
 /*================================================================================================
                               Sensor-Distance Equation Coefficients
 ================================================================================================*/
@@ -24,10 +23,7 @@
 /*================================================================================================
                                         Pin Addresses
 ================================================================================================*/
-#define BAROMETER_DATA_PIN 14
-#define BAROMETER_CLOCK_PIN 32
 #define BUZZER_PIN 15
-#define PUMP_PIN 33
 /*================================================================================================
                                          Variables
 ================================================================================================*/
@@ -43,7 +39,6 @@ double pressureValue;
 BluetoothSerial SerialBT;
 MLX90393 mlx[TOTAL_SENSORS];
 MLX90393::txyz data;
-Q2HX711 hx711(BAROMETER_DATA_PIN, BAROMETER_CLOCK_PIN);
 
 /*
   Low Pass Filter 
@@ -89,7 +84,7 @@ void loop() {
     // Recieve Bluetooth Data
     if (SerialBT.available()) {
       mode = SerialBT.readStringUntil('\n');
-      changeStiffness(mode);
+      Serial.println("Command Recieved: " + mode);
     }
 
   } else {
@@ -123,7 +118,6 @@ void initialiseSensors() {
       InitialZValues[TCA_channel][addr] = data.z;
     }
   }
-  initialPressure = hx711.read()/100.0;
 }
 // Read and store initial z-axis values for calibration and normalising values
 void setInitialZValues() {
@@ -200,53 +194,10 @@ void transmitDistances() {
     Serial.println(filteredValues); //Debuging
     SerialBT.println(filteredValues);
 }
-/*================================================================================================
-                                        Pneumatics (WIP)
-================================================================================================*/
 // Assigns valves and pumps as output devices and turns them off.
 void initializePins() { 
-  // Motor Pump Pins
-  pinMode(PUMP_PIN, OUTPUT);
-  analogWrite(PUMP_PIN, 0);
   // Buzzer Pin
   pinMode(BUZZER_PIN, OUTPUT);
-}
-// Controlls Pneumatic Circuit
-void pneumaticController(String command) {
-  if (command == "Inflate") {
-    analogWrite(PUMP_PIN, 255);
-    Serial.println("Inflating...");
-  } 
-  else if (command == "Neutral") {
-    analogWrite(PUMP_PIN, 100);
-    Serial.println("Neutral");
-  } 
-  else if (command == "Deflate") {
-    analogWrite(PUMP_PIN, 0);
-    Serial.println("Deflating...");
-  } 
-  else {
-    Serial.println("Error: Invalid command");
-  }
-}
-// Controls Incoming Bluetooth commands from App side
-void changeStiffness(String message){
-  message.trim();
-  if (message == "stiff"){
-    pneumaticController("Inflate");
-    delay(2000);
-    pneumaticController("Neutral");
-  }
-  else if (message == "default"){
-    pneumaticController("Deflate");
-  }
-  else {
-    Serial.println("Invalid Command Recieved: " + message);
-  }
-}
-// Return Pressure Sensor Data
-float getPressure() {
-  return (hx711.read()/100.0) - initialPressure;
 }
 /*================================================================================================
                                           Debugging
