@@ -49,7 +49,16 @@ MLX90393::txyz data;
   
   NOTE: Each sensor needs a filter instance as the it stores the previous raw and filtered data for filtering
 */
-LowPass<1> lp[TOTAL_SENSORS] = {LowPass<1>(1, 500, false)}; 
+LowPass<1> lp[TOTAL_SENSORS] = {
+    LowPass<1>(1.0, 500.0, false),
+    LowPass<1>(1.0, 500.0, false),
+    LowPass<1>(1.0, 500.0, false),
+    LowPass<1>(1.0, 500.0, false),
+    LowPass<1>(1.0, 500.0, false),
+    LowPass<1>(1.0, 500.0, false),
+    LowPass<1>(1.0, 500.0, false),
+    LowPass<1>(1.0, 500.0, false)
+};
 /*================================================================================================
                                           Main Loop 
 ================================================================================================*/
