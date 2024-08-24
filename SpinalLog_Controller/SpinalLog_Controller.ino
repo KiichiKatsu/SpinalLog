@@ -46,8 +46,10 @@ MLX90393::txyz data;
       * f0 (Cutoff Frequency): Controls the frequency at which the filter starts to tune the data. Lower means more filter.
       * fs (Sampling Frequency): The time interval between samples. Lower means how frequently the filter is applied.
       * adaptive (Adaptive Sampling Interval): Allows the filter to adjust to varying sampling intervals. For non-constant sampling.
+  
+  NOTE: Each sensor needs a filter instance as the it stores the previous raw and filtered data for filtering
 */
-LowPass<1> lp(1,500,false);
+LowPass<1> lp[TOTAL_SENSORS] = {LowPass<1>(1, 500, false)}; 
 /*================================================================================================
                                           Main Loop 
 ================================================================================================*/
@@ -185,7 +187,7 @@ void transmitDistances() {
 
     // Initialising and Formating String Transmission
     for (int i = 0; i < NUM_SENSORS * TCA_CHANNEL_COUNT; i++) {
-      filteredValues += String(lp.filt(distanceValues[i]));
+      filteredValues += String(lp[i].filt(distanceValues[i]));
       // Add delimiter between all values that isn't the last one
       if (i != NUM_SENSORS * TCA_CHANNEL_COUNT - 1) { 
           filteredValues += ", ";
