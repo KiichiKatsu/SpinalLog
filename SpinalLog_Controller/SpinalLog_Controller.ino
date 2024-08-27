@@ -12,6 +12,9 @@
 #define NUM_SENSORS 4 
 #define NUM_DIMENSIONS 3 
 #define TOTAL_SENSORS (NUM_SENSORS * TCA_CHANNEL_COUNT)
+#define LP_CUTOFF 2.0
+#define LP_SAMPLE 500
+#define LP_ADAPTIVE false
 /*================================================================================================
                               Sensor-Distance Equation Coefficients
 ================================================================================================*/
@@ -49,15 +52,16 @@ MLX90393::txyz data;
   
   NOTE: Each sensor needs a filter instance as the it stores the previous raw and filtered data for filtering
 */
+
 LowPass<1> lp[TOTAL_SENSORS] = {
-    LowPass<1>(1.0, 500.0, false),
-    LowPass<1>(1.0, 500.0, false),
-    LowPass<1>(1.0, 500.0, false),
-    LowPass<1>(1.0, 500.0, false),
-    LowPass<1>(1.0, 500.0, false),
-    LowPass<1>(1.0, 500.0, false),
-    LowPass<1>(1.0, 500.0, false),
-    LowPass<1>(1.0, 500.0, false)
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE),
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE),
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE),
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE),
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE),
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE),
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE),
+    LowPass<1>(LP_CUTOFF, LP_SAMPLE, LP_ADAPTIVE)
 };
 /*================================================================================================
                                           Main Loop 
