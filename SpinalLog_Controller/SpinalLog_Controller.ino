@@ -129,8 +129,8 @@ void initialiseSensors() {
       mlx[mlxNum].setOverSampling(0);
       mlx[mlxNum].setDigitalFiltering(0);
 
-      mlx[mlxNum].readData(data);            
-      InitialZValues[TCA_channel][addr] = data.z;
+      mlx[mlxNum].readData(data);
+      InitialZValues[TCA_channel][NUM_SENSORS - 1 - addr] = data.z;
     }
   }
 }
@@ -142,7 +142,7 @@ void setInitialZValues() {
       for (int addr = 0; addr < NUM_SENSORS; ++addr) {
         int mlxNum = TCA_channel * 4 + addr;
         mlx[mlxNum].readData(data);            
-        InitialZValues[TCA_channel][addr] = data.z;
+        InitialZValues[TCA_channel][NUM_SENSORS - 1 - addr] = data.z;
       }
     }
   }
@@ -154,7 +154,7 @@ void setZValues(){
     for (int addr = 0; addr < NUM_SENSORS; ++addr) {
       int mlxNum = TCA_channel * 4 + addr;
       mlx[mlxNum].readData(data);  
-      ZValues[TCA_channel][addr] = data.z - InitialZValues[TCA_channel][addr];
+      ZValues[TCA_channel][NUM_SENSORS - 1 - addr] = data.z - InitialZValues[TCA_channel][NUM_SENSORS - 1 - addr];
     }
   }
 }
